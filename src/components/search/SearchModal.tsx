@@ -20,10 +20,6 @@ function getFirstDay(year: number, month: number) {
 }
 
 const DOW = ['일', '월', '화', '수', '목', '금', '토'];
-const BADGE_MAP: Record<string, string> = {
-  region: 'region',
-  stay: 'stay',
-};
 
 interface CalendarProps {
   checkin: Date | null;
@@ -238,7 +234,6 @@ export function SearchModal() {
   }
 
   function toggleRegion(region: string) {
-    const regions = tab === 'domestic' ? DOMESTIC_REGIONS : OVERSEAS_REGIONS;
     if (region === '전체') {
       setSelectedRegions(['전체']);
     } else {

@@ -23,7 +23,6 @@ export function StaysPage() {
   const filtered = allStays.filter(s => {
     if (category && !s.categories.includes(category)) return false;
     if (region && region !== '전체') {
-      const r = region.toLowerCase();
       if (!s.region.includes(region) && !s.district?.includes(region) && !s.name.includes(region)) return false;
     }
     return true;
