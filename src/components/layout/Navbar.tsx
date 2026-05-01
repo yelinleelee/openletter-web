@@ -57,7 +57,7 @@ export function Navbar() {
                     <div className={styles.ddName}>{user.name || '사용자'}님</div>
                     <div className={styles.ddSub}>내 계정 관리</div>
                   </div>
-                  {[['내 예약', '/mypage'], ['쿠폰', '/mypage'], ['내 리뷰', '/mypage'], ['메시지', '/mypage'], ['내 정보', '/mypage'], ['설정', '/mypage'], ['고객센터', '/mypage']].map(([label, href]) => (
+                  {[['내 예약', '/bookings/my'], ['쿠폰', '/mypage'], ['내 리뷰', '/mypage'], ['메시지', '/mypage'], ['내 정보', '/mypage'], ['설정', '/mypage'], ['고객센터', '/mypage']].map(([label, href]) => (
                     <Link key={label} to={href} className={styles.ddItem} onClick={() => setDropdownOpen(false)}>{label}</Link>
                   ))}
                   <div className={styles.ddDivider} />
