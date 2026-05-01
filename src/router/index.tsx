@@ -9,6 +9,8 @@ import { AboutPage } from '../pages/About';
 import { MyPage } from '../pages/MyPage';
 import { NeighborhoodPage } from '../pages/Neighborhood';
 import { HostDashboard } from '../pages/Host/Dashboard';
+import { HostBookingsPage } from '../pages/Host/Bookings';
+import { MyBookingsPage } from '../pages/Bookings/MyBookings';
 import { HieroLandingPage } from '../pages/Host/Hiero';
 import { LaunchingPage } from '../pages/Host/Launching';
 import { SelectMethod } from '../pages/Host/Register/SelectMethod';
@@ -38,9 +40,16 @@ export const router = createBrowserRouter([
     ],
   },
   {
+    element: <MainLayout />,
+    children: [
+      { path: '/bookings/my', element: <ProtectedRoute><MyBookingsPage /></ProtectedRoute> },
+    ],
+  },
+  {
     element: <ProtectedRoute />,
     children: [
       { path: '/host', element: <HostDashboard /> },
+      { path: '/host/bookings', element: <HostBookingsPage /> },
       { path: '/host/register/select', element: <SelectMethod /> },
       {
         path: '/host/register',

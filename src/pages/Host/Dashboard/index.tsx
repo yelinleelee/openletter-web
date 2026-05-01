@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './Dashboard.module.css';
 import { api } from '../../../lib/api';
+import { HostSidebar } from './HostSidebar';
 
 interface MyProperty {
   id: string;
@@ -22,8 +23,6 @@ interface HostBooking {
   checkIn: string;
   totalPrice: number | string;
 }
-
-const MENU = ['내 숙소', '예약 관리', '정산', '리뷰', '설정'];
 
 export function HostDashboard() {
   const navigate = useNavigate();
@@ -81,17 +80,7 @@ export function HostDashboard() {
 
   return (
     <div className={styles.layout}>
-      <aside className={styles.sidebar}>
-        <div className={styles.sidebarLogo} onClick={() => navigate('/')}>
-          OPEN LETTER<span>HOST</span>
-        </div>
-        <nav className={styles.sidebarNav}>
-          {MENU.map(item => (
-            <div key={item} className={styles.sidebarItem}>{item}</div>
-          ))}
-        </nav>
-        <button className={styles.guestModeBtn} onClick={() => navigate('/')}>← 게스트 모드</button>
-      </aside>
+      <HostSidebar />
 
       <main className={styles.main}>
         <div className={styles.mainHeader}>
