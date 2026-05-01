@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { STAY_DETAILS } from '../../data/stays';
+import { api } from '../../lib/api';
+import { mapApiToStayDetail, type ApiProperty } from '../../lib/properties';
 import type { StayDetail } from '../../types';
 import styles from './StayDetail.module.css';
 
@@ -112,9 +113,49 @@ export function StayDetailPage() {
   const navigate = useNavigate();
   const [tabIdx, setTabIdx] = useState(0);
   const [bookmarked, setBookmarked] = useState(false);
+  const [stay, setStay] = useState<StayDetail | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const numId = Number(id);
-  const stay = STAY_DETAILS[numId] || STAY_DETAILS[1];
+  useEffect(() => {
+    if (!id) return;
+    let cancelled = false;
+    setLoading(true);
+    setError(null);
+    api.get<ApiProperty>(`/properties/${id}`)
+      .then(res => {
+        if (cancelled) return;
+        setStay(mapApiToStayDetail(res.data));
+      })
+      .catch(e => {
+        if (cancelled) return;
+        const status = e?.response?.status;
+        setError(
+          status === 404
+            ? '숙소를 찾을 수 없습니다.'
+            : (e?.response?.data?.error || e?.message || '숙소 정보를 불러오지 못했습니다.')
+        );
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => { cancelled = true; };
+  }, [id]);
+
+  if (loading) {
+    return <div style={{ padding: '120px 40px', textAlign: 'center', color: 'var(--mid)' }}>숙소 정보를 불러오는 중…</div>;
+  }
+  if (error || !stay) {
+    return (
+      <div style={{ padding: '120px 40px', textAlign: 'center' }}>
+        <p style={{ fontSize: 16, color: 'var(--mid)', marginBottom: 16 }}>{error ?? '숙소 정보를 불러오지 못했습니다.'}</p>
+        <button onClick={() => navigate('/stays')} style={{ padding: '10px 20px', background: 'var(--dark)', color: 'white', border: 'none', borderRadius: 8, fontSize: 14, cursor: 'pointer' }}>
+          전체 스테이로 돌아가기
+        </button>
+      </div>
+    );
+  }
+
   const bg = COLOR_MAP[stay.colorClass] || '#ccc';
 
   const TAB_CONTENT = [

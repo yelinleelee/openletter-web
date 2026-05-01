@@ -1,8 +1,10 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSearchModal } from '../../context/SearchModalContext';
 import { StayCard } from '../../components/common/StayCard';
-import { STAYS, CONCEPT_PLACEHOLDERS } from '../../data/stays';
+import { CONCEPT_PLACEHOLDERS } from '../../data/stays';
+import { api } from '../../lib/api';
+import { mapApiToStay, type ApiProperty } from '../../lib/properties';
 import type { Stay } from '../../types';
 import styles from './Home.module.css';
 
@@ -85,11 +87,12 @@ interface ConceptSectionProps {
   desc: string;
   category: string;
   linkCategory: string;
+  stays: Stay[];
 }
 
-function ConceptSection({ title, desc, category, linkCategory }: ConceptSectionProps) {
-  const real = STAYS.filter(s => s.categories?.includes(category)).slice(0, 4);
-  const fills = (CONCEPT_PLACEHOLDERS[category] || []).slice(0, 4 - real.length);
+function ConceptSection({ title, desc, category, linkCategory, stays }: ConceptSectionProps) {
+  const real = stays.filter(s => s.categories?.includes(category)).slice(0, 4);
+  const fills = (CONCEPT_PLACEHOLDERS[category] || []).slice(0, Math.max(0, 4 - real.length));
 
   type PlaceholderStay = Omit<Stay, 'id' | 'images'> & { _color: string };
   const cards: Array<Stay | PlaceholderStay> = [...real, ...fills];
@@ -120,6 +123,21 @@ function ConceptSection({ title, desc, category, linkCategory }: ConceptSectionP
 export function HomePage() {
   const { open } = useSearchModal();
   const navigate = useNavigate();
+  const [stays, setStays] = useState<Stay[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    api.get<ApiProperty[]>('/properties')
+      .then(res => {
+        if (cancelled) return;
+        setStays(res.data.map(mapApiToStay));
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setStays([]);
+      });
+    return () => { cancelled = true; };
+  }, []);
 
   return (
     <div className={styles.page}>
@@ -174,9 +192,9 @@ export function HomePage() {
 
       <InfoSlider />
 
-      <ConceptSection title="아트 스테이" desc="예술가의 손길이 담긴 공간에서의 하룻밤" category="아트 스테이" linkCategory="아트 스테이" />
-      <ConceptSection title="친환경 스테이" desc="자연과 함께 숨쉬는 지속 가능한 공간" category="친환경" linkCategory="친환경" />
-      <ConceptSection title="로컬 스테이" desc="그 동네 사람처럼 살아보는 특별한 경험" category="로컬 스테이" linkCategory="로컬 스테이" />
+      <ConceptSection stays={stays} title="아트 스테이" desc="예술가의 손길이 담긴 공간에서의 하룻밤" category="아트 스테이" linkCategory="아트 스테이" />
+      <ConceptSection stays={stays} title="친환경 스테이" desc="자연과 함께 숨쉬는 지속 가능한 공간" category="친환경" linkCategory="친환경" />
+      <ConceptSection stays={stays} title="로컬 스테이" desc="그 동네 사람처럼 살아보는 특별한 경험" category="로컬 스테이" linkCategory="로컬 스테이" />
     </div>
   );
 }
