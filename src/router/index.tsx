@@ -1,12 +1,18 @@
 import { createBrowserRouter } from 'react-router-dom';
 import { MainLayout } from '../components/layout/MainLayout';
+import { ProtectedRoute } from '../components/auth/ProtectedRoute';
 import { HomePage } from '../pages/Home';
 import { StaysPage } from '../pages/Stays';
 import { StayDetailPage } from '../pages/StayDetail';
 import { BrandStoryPage } from '../pages/BrandStory';
+import { AboutPage } from '../pages/About';
 import { MyPage } from '../pages/MyPage';
 import { NeighborhoodPage } from '../pages/Neighborhood';
 import { HostDashboard } from '../pages/Host/Dashboard';
+import { HostBookingsPage } from '../pages/Host/Bookings';
+import { MyBookingsPage } from '../pages/Bookings/MyBookings';
+import { HieroLandingPage } from '../pages/Host/Hiero';
+import { LaunchingPage } from '../pages/Host/Launching';
 import { SelectMethod } from '../pages/Host/Register/SelectMethod';
 import { RegisterLayout } from '../pages/Host/Register/RegisterLayout';
 import { TypeStep } from '../pages/Host/Register/steps/TypeStep';
@@ -26,30 +32,39 @@ export const router = createBrowserRouter([
       { path: '/stays', element: <StaysPage /> },
       { path: '/stays/:id', element: <StayDetailPage /> },
       { path: '/brand-story', element: <BrandStoryPage /> },
-      { path: '/mypage', element: <MyPage /> },
+      { path: '/about', element: <AboutPage /> },
+      { path: '/mypage', element: <ProtectedRoute><MyPage /></ProtectedRoute> },
       { path: '/neighborhood', element: <NeighborhoodPage /> },
+      { path: '/host/hiero', element: <HieroLandingPage /> },
+      { path: '/host/launching', element: <LaunchingPage /> },
     ],
   },
   {
-    path: '/host',
-    element: <HostDashboard />,
-  },
-  {
-    path: '/host/register/select',
-    element: <SelectMethod />,
-  },
-  {
-    path: '/host/register',
-    element: <RegisterLayout />,
+    element: <MainLayout />,
     children: [
-      { path: 'type', element: <TypeStep /> },
-      { path: 'concept', element: <ConceptStep /> },
-      { path: 'basics', element: <BasicsStep /> },
-      { path: 'description', element: <DescriptionStep /> },
-      { path: 'location', element: <LocationStep /> },
-      { path: 'photos', element: <PhotosStep /> },
-      { path: 'price', element: <PriceStep /> },
-      { path: 'success', element: <SuccessStep /> },
+      { path: '/bookings/my', element: <ProtectedRoute><MyBookingsPage /></ProtectedRoute> },
+    ],
+  },
+  {
+    element: <ProtectedRoute />,
+    children: [
+      { path: '/host', element: <HostDashboard /> },
+      { path: '/host/bookings', element: <HostBookingsPage /> },
+      { path: '/host/register/select', element: <SelectMethod /> },
+      {
+        path: '/host/register',
+        element: <RegisterLayout />,
+        children: [
+          { path: 'type', element: <TypeStep /> },
+          { path: 'concept', element: <ConceptStep /> },
+          { path: 'basics', element: <BasicsStep /> },
+          { path: 'description', element: <DescriptionStep /> },
+          { path: 'location', element: <LocationStep /> },
+          { path: 'photos', element: <PhotosStep /> },
+          { path: 'price', element: <PriceStep /> },
+          { path: 'success', element: <SuccessStep /> },
+        ],
+      },
     ],
   },
 ]);

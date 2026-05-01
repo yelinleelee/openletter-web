@@ -1,8 +1,9 @@
-import { useState } from 'react';
 import styles from '../Register.module.css';
+import { useRegister } from '../RegisterContext';
 
 export function PriceStep() {
-  const [price, setPrice] = useState('');
+  const { data, setField } = useRegister();
+  const price = data.price;
   return (
     <div className={styles.stepPage}>
       <h1 className={styles.stepTitle}>1박 가격을 설정해주세요</h1>
@@ -16,7 +17,7 @@ export function PriceStep() {
             type="number"
             placeholder="100,000"
             value={price}
-            onChange={e => setPrice(e.target.value)}
+            onChange={e => setField('price', e.target.value)}
             min={10000}
             step={1000}
           />

@@ -27,8 +27,8 @@ export function MyPage() {
     <div className={styles.page}>
       <div className={styles.profileSection}>
         <div className={styles.profileAvatar}>
-          {user.photoURL ? (
-            <img src={user.photoURL} alt="" />
+          {user.avatar ? (
+            <img src={user.avatar} alt="" />
           ) : (
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />
@@ -36,7 +36,7 @@ export function MyPage() {
           )}
         </div>
         <div>
-          <h2 className={styles.profileName}>{user.displayName || '사용자'}님</h2>
+          <h2 className={styles.profileName}>{user.name || '사용자'}님</h2>
           <p className={styles.profileEmail}>{user.email}</p>
         </div>
       </div>
@@ -75,7 +75,7 @@ export function MyPage() {
           <div className={styles.infoSection}>
             <div className={styles.infoRow}>
               <span className={styles.infoLabel}>이름</span>
-              <span className={styles.infoVal}>{user.displayName || '-'}</span>
+              <span className={styles.infoVal}>{user.name || '-'}</span>
             </div>
             <div className={styles.infoRow}>
               <span className={styles.infoLabel}>이메일</span>

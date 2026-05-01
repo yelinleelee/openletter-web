@@ -1,5 +1,5 @@
 export interface Stay {
-  id: number;
+  id: string | number;
   name: string;
   region: string;
   district: string;
@@ -13,7 +13,7 @@ export interface Stay {
 }
 
 export interface StayDetail {
-  id: number;
+  id: string | number;
   name: string;
   location: string;
   colorClass: string;

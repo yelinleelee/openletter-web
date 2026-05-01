@@ -1,15 +1,18 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { StayCard } from '../../components/common/StayCard';
 import { NaverMap } from '../../components/map/NaverMap';
 import type { MapMarker } from '../../components/map/NaverMap';
-import { STAYS, CONCEPT_PLACEHOLDERS, STAY_LATLNG, STAY_COFFEE_ROUTES, COFFEE_ROUTE_POIS } from '../../data/stays';
+import { CONCEPT_PLACEHOLDERS, STAY_LATLNG, STAY_COFFEE_ROUTES, COFFEE_ROUTE_POIS } from '../../data/stays';
+import { api } from '../../lib/api';
+import { mapApiToStay, getLatLng, type ApiProperty } from '../../lib/properties';
 import type { Stay } from '../../types';
 import styles from './Stays.module.css';
 
 const CARD_COLORS = ['cp-1', 'cp-2', 'cp-3', 'cp-4', 'cp-5', 'cp-6'];
 
 const ROUTES = [
+  { id: 'all',       emoji: '✨', label: '전체보기',  color: '#222' },
   { id: 'coffee',    emoji: '🥐', label: '커피향',    color: '#C17F3A' },
   { id: 'dawn',      emoji: '🌿', label: '새벽산책',  color: '#3A7D44' },
   { id: 'dog',       emoji: '🐕', label: '강아지산책', color: '#8B6355' },
@@ -24,6 +27,10 @@ const ROUTES = [
 
 type RouteId = typeof ROUTES[number]['id'];
 
+interface ApiStay extends Stay {
+  _coord?: { lat: number; lng: number };
+}
+
 export function StaysPage() {
   const [searchParams] = useSearchParams();
   const region   = searchParams.get('region')   || '';
@@ -31,16 +38,50 @@ export function StaysPage() {
   const date     = searchParams.get('date')     || '';
   const guests   = searchParams.get('guests')   || '';
 
-  const [activeRouteId, setActiveRouteId] = useState<RouteId>('coffee');
+  const routeParam = searchParams.get('route') || '';
+  const initialRoute: RouteId = ROUTES.some(r => r.id === routeParam)
+    ? (routeParam as RouteId)
+    : 'all';
+  const [activeRouteId, setActiveRouteId] = useState<RouteId>(initialRoute);
   const [hoveredStay, setHoveredStay] = useState<{ lat: number; lng: number } | null>(null);
   const [hoveredStayName, setHoveredStayName] = useState<string | null>(null);
 
+  const [apiStays, setApiStays] = useState<ApiStay[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    setError(null);
+    api.get<ApiProperty[]>('/properties')
+      .then(res => {
+        if (cancelled) return;
+        const stays: ApiStay[] = res.data.map(p => {
+          const stay = mapApiToStay(p) as ApiStay;
+          const coord = getLatLng(p);
+          if (coord) stay._coord = coord;
+          return stay;
+        });
+        setApiStays(stays);
+      })
+      .catch(e => {
+        if (cancelled) return;
+        setError(e?.response?.data?.error || e?.message || '숙소를 불러오지 못했습니다.');
+        setApiStays([]);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => { cancelled = true; };
+  }, []);
+
   type PlaceholderStay = Omit<Stay, 'id' | 'images'> & { _color: string };
 
-  const allStays: Array<Stay | PlaceholderStay> = [
-    ...STAYS,
-    ...Object.values(CONCEPT_PLACEHOLDERS).flat(),
-  ];
+  const allStays: Array<ApiStay | PlaceholderStay> = useMemo(
+    () => [...apiStays, ...Object.values(CONCEPT_PLACEHOLDERS).flat()],
+    [apiStays]
+  );
 
   const filtered = allStays.filter(s => {
     if (category && !s.categories.includes(category)) return false;
@@ -50,9 +91,11 @@ export function StaysPage() {
     return true;
   });
 
-  const mapMarkers: MapMarker[] = filtered
-    .filter(s => s.name in STAY_LATLNG)
-    .map(s => ({ ...STAY_LATLNG[s.name], name: s.name, price: s.price }));
+  const mapMarkers: MapMarker[] = filtered.flatMap(s => {
+    const coord = ('_coord' in s && s._coord) || STAY_LATLNG[s.name];
+    if (!coord) return [];
+    return [{ ...coord, name: s.name, price: s.price }];
+  });
 
   const mapCenter = mapMarkers.length > 0
     ? {
@@ -63,13 +106,16 @@ export function StaysPage() {
 
   const activeRoute = ROUTES.find(r => r.id === activeRouteId)!;
 
+  const isAll = activeRouteId === 'all';
+
   const routeWaypoints = (
+    !isAll &&
     hoveredStayName &&
     activeRouteId === 'coffee' &&
     STAY_COFFEE_ROUTES[hoveredStayName]
   ) || null;
 
-  const routePOIs = activeRouteId === 'coffee' ? COFFEE_ROUTE_POIS : null;
+  const routePOIs = (!isAll && activeRouteId === 'coffee') ? COFFEE_ROUTE_POIS : null;
 
   return (
     <div className={styles.page}>
@@ -101,10 +147,12 @@ export function StaysPage() {
         </h1>
 
         {/* 선택된 루트 표시 */}
-        <div className={styles.activeRouteInfo}>
-          <span className={styles.activeRouteDot} style={{ background: activeRoute.color }} />
-          <span>{activeRoute.emoji} <strong>{activeRoute.label}</strong> 루트로 탐색 중</span>
-        </div>
+        {!isAll && (
+          <div className={styles.activeRouteInfo}>
+            <span className={styles.activeRouteDot} style={{ background: activeRoute.color }} />
+            <span>{activeRoute.emoji} <strong>{activeRoute.label}</strong> 루트로 탐색 중</span>
+          </div>
+        )}
 
         {(region || date || guests) && (
           <div className={styles.searchInfo}>
@@ -113,14 +161,22 @@ export function StaysPage() {
             {guests && <span>{guests}</span>}
           </div>
         )}
-        <p className={styles.count}>{filtered.length}개의 스테이</p>
+        <p className={styles.count}>{loading ? '불러오는 중…' : `${filtered.length}개의 스테이`}</p>
       </div>
 
       {/* ── 카드 + 지도 레이아웃 ── */}
       <div className={styles.layout}>
 
         <div className={styles.cardList}>
-          {filtered.length === 0 ? (
+          {error ? (
+            <div className={styles.empty}>
+              <p>{error}</p>
+            </div>
+          ) : loading ? (
+            <div className={styles.empty}>
+              <p>숙소를 불러오는 중입니다…</p>
+            </div>
+          ) : filtered.length === 0 ? (
             <div className={styles.empty}>
               <p>검색 결과가 없습니다.</p>
               <p>다른 지역이나 날짜로 검색해보세요.</p>
@@ -128,7 +184,7 @@ export function StaysPage() {
           ) : (
             <div className={styles.grid}>
               {filtered.map((s, i) => {
-                const coord = STAY_LATLNG[s.name];
+                const coord = ('_coord' in s && s._coord) || STAY_LATLNG[s.name];
                 return (
                   <StayCard
                     key={('id' in s ? s.id : '') + s.name + i}

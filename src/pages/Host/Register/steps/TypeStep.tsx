@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import styles from '../Register.module.css';
+import { useRegister } from '../RegisterContext';
 
 const TYPES = [
   { icon: '🏠', label: '단독주택', desc: '독채 주택 전체' },
@@ -11,7 +11,7 @@ const TYPES = [
 ];
 
 export function TypeStep() {
-  const [selected, setSelected] = useState<string | null>(null);
+  const { data, setField } = useRegister();
   return (
     <div className={styles.stepPage}>
       <h1 className={styles.stepTitle}>어떤 유형의 숙소를 등록하시나요?</h1>
@@ -20,8 +20,8 @@ export function TypeStep() {
         {TYPES.map(t => (
           <div
             key={t.label}
-            className={`${styles.typeCard} ${selected === t.label ? styles.typeCardSelected : ''}`}
-            onClick={() => setSelected(t.label)}
+            className={`${styles.typeCard} ${data.type === t.label ? styles.typeCardSelected : ''}`}
+            onClick={() => setField('type', t.label)}
           >
             <div className={styles.typeIcon}>{t.icon}</div>
             <div className={styles.typeLabel}>{t.label}</div>

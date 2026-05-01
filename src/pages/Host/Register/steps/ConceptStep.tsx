@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import styles from '../Register.module.css';
+import { useRegister } from '../RegisterContext';
 
 const CONCEPTS = [
   { icon: '🎨', label: '아트 스테이', desc: '예술가의 감성이 담긴 공간' },
@@ -9,7 +9,7 @@ const CONCEPTS = [
 ];
 
 export function ConceptStep() {
-  const [selected, setSelected] = useState<string | null>(null);
+  const { data, setField } = useRegister();
   return (
     <div className={styles.stepPage}>
       <h1 className={styles.stepTitle}>숙소의 컨셉을 선택해주세요</h1>
@@ -18,8 +18,8 @@ export function ConceptStep() {
         {CONCEPTS.map(c => (
           <div
             key={c.label}
-            className={`${styles.conceptCard} ${selected === c.label ? styles.conceptCardSelected : ''}`}
-            onClick={() => setSelected(c.label)}
+            className={`${styles.conceptCard} ${data.concept === c.label ? styles.conceptCardSelected : ''}`}
+            onClick={() => setField('concept', c.label)}
           >
             <div className={styles.typeIcon}>{c.icon}</div>
             <div className={styles.conceptLabel}>{c.label}</div>
