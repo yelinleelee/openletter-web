@@ -10,7 +10,7 @@ const BADGE_CLS: Record<string, string> = {
 };
 
 interface Props {
-  stay: Stay | (Omit<Stay, 'id' | 'images'> & { _color: string; id?: number });
+  stay: Stay | (Omit<Stay, 'id' | 'images'> & { _color: string; id?: number; images?: string[] });
   colorClass?: string;
   onHoverStart?: () => void;
   onHoverEnd?: () => void;

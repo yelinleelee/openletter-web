@@ -10,26 +10,30 @@ const CARD_COLORS = ['cp-1', 'cp-2', 'cp-3', 'cp-4', 'cp-5', 'cp-6'];
 
 const INFO_CARDS = [
   {
-    title: 'OPEN LETTER HOUSE란?',
+    title: '오픈레터하우스를 소개합니다',
     desc: '로컬 문화와 함께하는 진짜 여행의 시작',
     bg: '#f5f0e8',
     emoji: '✉️',
+    link: '/about',
   },
   {
     title: '숙소 관리가 귀찮다면?',
     desc: '오픈레터 관리 구독 서비스 — 숙소 운영을 우리에게 맡겨보세요',
     bg: '#eeebf8',
     emoji: '🏡',
+    link: '/host/hiero',
   },
   {
     title: '매물부터 리모델링까지',
     desc: '숙소 컨설팅 서비스 — 매물 발굴부터 리모델링까지 직접 공급해드려요',
     bg: '#e8f0f8',
     emoji: '🔑',
+    link: '/host/launching',
   },
 ];
 
 function InfoSlider() {
+  const navigate = useNavigate();
   const trackRef = useRef<HTMLDivElement>(null);
   const [idx, setIdx] = useState(0);
   const total = INFO_CARDS.length;
@@ -58,7 +62,12 @@ function InfoSlider() {
       </div>
       <div className={styles.infoTrack} ref={trackRef}>
         {INFO_CARDS.map((card) => (
-          <div key={card.title} className={styles.infoCard} style={{ background: card.bg }}>
+          <div
+            key={card.title}
+            className={styles.infoCard}
+            style={{ background: card.bg }}
+            onClick={() => card.link && navigate(card.link)}
+          >
             <div className={styles.infoCardText}>
               <p className={styles.infoCardTitle}>{card.title}</p>
               <p className={styles.infoCardDesc}>{card.desc}</p>
@@ -117,6 +126,11 @@ export function HomePage() {
 
       {/* ── 큰 검색바 ── */}
       <div className={styles.searchSection}>
+        <div className={styles.heroText}>
+          <p className={styles.heroSub}>전세계 98%의 사람들은 나에게 맞지 않는 곳에서 살고 있다!</p>
+          <h1 className={styles.heroTitle}>나에게 딱 맞는 동네에서 살아보세요!</h1>
+        </div>
+
         <div className={styles.searchPill} onClick={open}>
           <div className={styles.searchItem}>
             <span className={styles.searchLabel}>어디로</span>
@@ -145,14 +159,14 @@ export function HomePage() {
       {/* ── 지도 찾기 배너 ── */}
       <section className={styles.banner} onClick={() => navigate('/neighborhood')}>
         <div className={styles.bannerInner}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2d6a4f" strokeWidth="1.8">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2d6a4f" strokeWidth="1.8">
             <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9.5z"/>
             <path d="M9 21V12h6v9"/>
           </svg>
           <span className={styles.bannerText}>
             어디에 살아야 할지 고민된다면? <strong>내 동네 찾기</strong>
           </span>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2d6a4f" strokeWidth="2.5">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2d6a4f" strokeWidth="2.5">
             <polyline points="9 18 15 12 9 6" />
           </svg>
         </div>

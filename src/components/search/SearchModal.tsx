@@ -4,25 +4,40 @@ import { useSearchModal } from '../../context/SearchModalContext';
 import { DOMESTIC_REGIONS, OVERSEAS_REGIONS } from '../../data/stays';
 import styles from './SearchModal.module.css';
 
-const DISTRICTS = ['강동구', '종로구', '마포구', '성동구', '용산구'];
-
-const ROUTES = [
-  { id: 'coffee', label: '커피향 루트', emoji: '🥐', desc: '골목 카페를 따라 걷는 하루' },
-  { id: 'dawn',   label: '새벽산책',   emoji: '🌿', desc: '이른 아침, 고요한 골목길' },
-  { id: 'dog',    label: '강아지산책', emoji: '🐕', desc: '반려견과 함께하는 동네 산책' },
-  { id: 'season', label: '계절감성',   emoji: '🌸', desc: '계절의 변화를 느끼는 풍경길' },
+const DISTRICTS = [
+  '강남구', '강동구', '강북구', '강서구', '관악구',
+  '광진구', '구로구', '금천구', '노원구', '도봉구',
+  '동대문구', '동작구', '마포구', '서대문구', '서초구',
+  '성동구', '성북구', '송파구', '양천구', '영등포구',
+  '용산구', '은평구', '종로구', '중구', '중랑구',
 ];
 
-const STEP_LABELS = ['지역 선택', '구 선택', '골목 루트'];
+const ROUTES = [
+  { id: 'coffee',    label: '커피향 루트',  emoji: '🥐', desc: '골목 카페를 따라 걷는 하루' },
+  { id: 'dawn',      label: '새벽산책',     emoji: '🌿', desc: '이른 아침, 고요한 골목길' },
+  { id: 'dog',       label: '강아지산책',   emoji: '🐕', desc: '반려견과 함께하는 동네 산책' },
+  { id: 'season',    label: '계절감성',     emoji: '🌸', desc: '계절의 변화를 느끼는 풍경길' },
+  { id: 'food',      label: '골목맛집',     emoji: '🍜', desc: '숨겨진 동네 맛집을 찾아서' },
+  { id: 'running',   label: '러닝코스',     emoji: '🏃', desc: '상쾌한 아침 러닝 루트' },
+  { id: 'bookstore', label: '동네서점',     emoji: '📚', desc: '골목 속 작은 서점들' },
+  { id: 'night',     label: '야경산책',     emoji: '🌙', desc: '밤빛 물드는 골목 야경' },
+  { id: 'indie',     label: '인디바이브',   emoji: '🎨', desc: '독립예술가들의 공간들' },
+  { id: 'cafe',      label: '스테디카페',   emoji: '☕', desc: '오래된 단골 카페 순례' },
+  { id: 'unsure',    label: '잘 모르겠어요', emoji: '🤔', desc: '구 안의 모든 동네 보여드릴게요' },
+];
+
+const STEP_LABELS = ['지역 선택', '구 선택', '날짜 선택', '골목 루트'];
 
 export function SearchModal() {
   const { isOpen, close } = useSearchModal();
   const navigate = useNavigate();
 
-  const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [tab, setTab] = useState<'domestic' | 'overseas'>('domestic');
   const [selectedRegions, setSelectedRegions] = useState<string[]>(['전체']);
   const [selectedDistrict, setSelectedDistrict] = useState('');
+  const [checkIn, setCheckIn] = useState('');
+  const [checkOut, setCheckOut] = useState('');
   const [selectedRoute, setSelectedRoute] = useState('');
 
   useEffect(() => {
@@ -52,6 +67,8 @@ export function SearchModal() {
   function reset() {
     setSelectedRegions(['전체']);
     setSelectedDistrict('');
+    setCheckIn('');
+    setCheckOut('');
     setSelectedRoute('');
     setStep(1);
   }
@@ -61,11 +78,14 @@ export function SearchModal() {
     const regionVal = selectedRegions.includes('전체') ? '' : selectedRegions.join(',');
     if (regionVal) params.set('region', regionVal);
     if (selectedDistrict) params.set('district', selectedDistrict);
-    if (selectedRoute) params.set('route', selectedRoute);
+    if (checkIn) params.set('checkIn', checkIn);
+    if (checkOut) params.set('checkOut', checkOut);
+    if (selectedRoute && selectedRoute !== 'unsure') params.set('route', selectedRoute);
     close();
     navigate('/stays?' + params.toString());
   }
 
+  const totalSteps = 4;
   const regions = tab === 'domestic' ? DOMESTIC_REGIONS : OVERSEAS_REGIONS;
 
   if (!isOpen) return null;
@@ -87,7 +107,7 @@ export function SearchModal() {
         {/* 단계 표시 */}
         <div className={styles.stepBar}>
           {STEP_LABELS.map((label, i) => {
-            const n = (i + 1) as 1 | 2 | 3;
+            const n = (i + 1) as 1 | 2 | 3 | 4;
             const isDone = step > n;
             const isActive = step === n;
             return (
@@ -102,7 +122,7 @@ export function SearchModal() {
                   </div>
                   <span className={`${styles.stepLabel} ${isActive || isDone ? styles.stepLabelActive : ''}`}>{label}</span>
                 </div>
-                {i < 2 && <div className={`${styles.stepConnector} ${isDone ? styles.stepConnectorDone : ''}`} />}
+                {i < totalSteps - 1 && <div className={`${styles.stepConnector} ${isDone ? styles.stepConnectorDone : ''}`} />}
               </div>
             );
           })}
@@ -153,8 +173,49 @@ export function SearchModal() {
             </div>
           )}
 
-          {/* 3단계: 골목 루트 */}
+          {/* 3단계: 날짜 선택 */}
           {step === 3 && (
+            <div className={styles.stepSection}>
+              <div className={styles.stepTitle}>언제 머무실 예정인가요?</div>
+              <div className={styles.dateGrid}>
+                <label className={styles.dateField}>
+                  <span className={styles.dateLabel}>체크인</span>
+                  <input
+                    type="date"
+                    className={styles.dateInput}
+                    value={checkIn}
+                    min={new Date().toISOString().split('T')[0]}
+                    onChange={e => {
+                      setCheckIn(e.target.value);
+                      if (checkOut && e.target.value > checkOut) setCheckOut('');
+                    }}
+                  />
+                </label>
+                <label className={styles.dateField}>
+                  <span className={styles.dateLabel}>체크아웃</span>
+                  <input
+                    type="date"
+                    className={styles.dateInput}
+                    value={checkOut}
+                    min={checkIn || new Date().toISOString().split('T')[0]}
+                    onChange={e => setCheckOut(e.target.value)}
+                  />
+                </label>
+              </div>
+              {checkIn && checkOut && (
+                <div className={styles.dateSelected}>
+                  {new Date(checkIn).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' })}
+                  {' → '}
+                  {new Date(checkOut).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' })}
+                  {' · '}
+                  {Math.round((new Date(checkOut).getTime() - new Date(checkIn).getTime()) / 86400000)}박
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* 4단계: 골목 루트 */}
+          {step === 4 && (
             <div className={styles.stepSection}>
               <div className={styles.stepTitle}>어떤 골목 루트로 떠나볼까요?</div>
               <div className={styles.routeGrid}>
@@ -177,15 +238,15 @@ export function SearchModal() {
         {/* 푸터 */}
         <div className={styles.modalFooter}>
           {step > 1 ? (
-            <button className={styles.backBtn} onClick={() => setStep(s => (s - 1) as 1 | 2 | 3)}>
+            <button className={styles.backBtn} onClick={() => setStep(s => (s - 1) as 1 | 2 | 3 | 4)}>
               ← 이전
             </button>
           ) : (
             <button className={styles.resetBtn} onClick={reset}>초기화</button>
           )}
 
-          {step < 3 ? (
-            <button className={styles.nextBtn} onClick={() => setStep(s => (s + 1) as 1 | 2 | 3)}>
+          {step < 4 ? (
+            <button className={styles.nextBtn} onClick={() => setStep(s => (s + 1) as 1 | 2 | 3 | 4)}>
               다음 →
             </button>
           ) : (

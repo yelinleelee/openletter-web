@@ -10,6 +10,7 @@ import styles from './Stays.module.css';
 const CARD_COLORS = ['cp-1', 'cp-2', 'cp-3', 'cp-4', 'cp-5', 'cp-6'];
 
 const ROUTES = [
+  { id: 'all',       emoji: '✨', label: '전체보기',  color: '#222' },
   { id: 'coffee',    emoji: '🥐', label: '커피향',    color: '#C17F3A' },
   { id: 'dawn',      emoji: '🌿', label: '새벽산책',  color: '#3A7D44' },
   { id: 'dog',       emoji: '🐕', label: '강아지산책', color: '#8B6355' },
@@ -31,7 +32,11 @@ export function StaysPage() {
   const date     = searchParams.get('date')     || '';
   const guests   = searchParams.get('guests')   || '';
 
-  const [activeRouteId, setActiveRouteId] = useState<RouteId>('coffee');
+  const routeParam = searchParams.get('route') || '';
+  const initialRoute: RouteId = ROUTES.some(r => r.id === routeParam)
+    ? (routeParam as RouteId)
+    : 'all';
+  const [activeRouteId, setActiveRouteId] = useState<RouteId>(initialRoute);
   const [hoveredStay, setHoveredStay] = useState<{ lat: number; lng: number } | null>(null);
   const [hoveredStayName, setHoveredStayName] = useState<string | null>(null);
 
@@ -63,13 +68,16 @@ export function StaysPage() {
 
   const activeRoute = ROUTES.find(r => r.id === activeRouteId)!;
 
+  const isAll = activeRouteId === 'all';
+
   const routeWaypoints = (
+    !isAll &&
     hoveredStayName &&
     activeRouteId === 'coffee' &&
     STAY_COFFEE_ROUTES[hoveredStayName]
   ) || null;
 
-  const routePOIs = activeRouteId === 'coffee' ? COFFEE_ROUTE_POIS : null;
+  const routePOIs = (!isAll && activeRouteId === 'coffee') ? COFFEE_ROUTE_POIS : null;
 
   return (
     <div className={styles.page}>
@@ -101,10 +109,12 @@ export function StaysPage() {
         </h1>
 
         {/* 선택된 루트 표시 */}
-        <div className={styles.activeRouteInfo}>
-          <span className={styles.activeRouteDot} style={{ background: activeRoute.color }} />
-          <span>{activeRoute.emoji} <strong>{activeRoute.label}</strong> 루트로 탐색 중</span>
-        </div>
+        {!isAll && (
+          <div className={styles.activeRouteInfo}>
+            <span className={styles.activeRouteDot} style={{ background: activeRoute.color }} />
+            <span>{activeRoute.emoji} <strong>{activeRoute.label}</strong> 루트로 탐색 중</span>
+          </div>
+        )}
 
         {(region || date || guests) && (
           <div className={styles.searchInfo}>

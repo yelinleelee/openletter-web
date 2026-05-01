@@ -4,18 +4,51 @@
 
 /* ── Search section ── */
 .searchSection {
-  padding: 48px 40px 44px;
+  position: relative;
+  padding: 120px 40px 300px;
   border-bottom: 1px solid #ebebeb;
   display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
+  background:
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.92) 0%, rgba(255, 255, 255, 0.6) 45%, rgba(255, 255, 255, 0.2) 100%),
+    url('/main1.jpg') center / cover no-repeat;
+}
+
+.heroText {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  margin-bottom: 36px;
+  word-break: keep-all;
+}
+.heroSub {
+  font-size: clamp(14px, 2vw, 16px);
+  font-weight: 600;
+  color: #2d6a4f; /* 브랜드 컬러 느낌으로 포인트 */
+  margin-bottom: 12px;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+}
+.heroTitle {
+  font-size: clamp(22px, 3vw, 32px);
+  font-weight: 700;
+  color: #222;
+  letter-spacing: -0.02em;
+  text-shadow: 0 1px 3px rgba(255, 255, 255, 0.6);
+}
+
+.searchPill {
+  position: relative;
+  z-index: 1;
 }
 
 .searchPill {
   display: flex;
   align-items: center;
   border: 1px solid #ddd;
-  border-radius: 16px;
-  height: 72px;
+  border-radius: 18px;
+  height: 88px;
   width: 100%;
   max-width: 860px;
   cursor: pointer;
@@ -61,9 +94,9 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  margin: 10px;
-  padding: 0 24px;
-  height: 52px;
+  margin: 12px;
+  padding: 0 26px;
+  height: 64px;
   background: #1a1a1a;
   color: #fff;
   border: none;
@@ -219,22 +252,28 @@
 
 /* ── CTA Banner ── */
 .banner {
+  position: relative;
+  overflow: hidden;
   background: #eaf3ec;
   cursor: pointer;
   transition: background 0.15s;
 }
-.banner:hover { background: #dfeee2; }
+.banner:hover {
+  background: #e0ebe2; /* 마우스 오버 시 약간 더 진한 연초록색 적용 */
+}
 
 .bannerInner {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  padding: 24px 40px;
+  padding: 20px 40px;
 }
 
 .bannerText {
-  font-size: 15px;
+  font-size: 17px;
   color: #1a3325;
   font-weight: 400;
   letter-spacing: -0.01em;
@@ -255,14 +294,14 @@
   }
   .infoCard { scroll-snap-align: start; min-width: 260px; }
   .infoSection { padding: 36px 20px 28px; }
-  .searchSection { padding: 20px; }
+  .searchSection { padding: 64px 20px 48px; }
   .searchPill { height: 60px; }
   .searchItem { padding: 0 18px; }
   .searchBtn { padding: 0 18px; font-size: 14px; }
   .cardGrid { grid-template-columns: repeat(2, 1fr); }
   .conceptSection { padding: 40px 20px; }
   .conceptHeader { flex-direction: column; align-items: flex-start; gap: 12px; }
-  .bannerInner { padding: 16px 24px; }
+  .bannerInner { padding: 12px 24px; }
 }
 @media (max-width: 600px) {
   .searchPill { flex-direction: column; height: auto; border-radius: 16px; }

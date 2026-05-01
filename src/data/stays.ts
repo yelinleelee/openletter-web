@@ -11,7 +11,7 @@ export const STAYS: Stay[] = [
     price: 150000,
     badges: ['단독소개'],
     description: '편지처럼 남겨지는 공간',
-    images: ['/images/stays/openletter-house/main.svg'],
+    images: ['/images/stays/thumnail/1.jpg'],
   },
   {
     id: 2,
@@ -23,7 +23,7 @@ export const STAYS: Stay[] = [
     price: 130000,
     badges: [],
     description: '자연과 함께하는 친환경 공간',
-    images: ['/images/stays/chorok-jae/main.svg'],
+    images: ['/images/stays/thumnail/2.jpg'],
   },
   {
     id: 3,
@@ -35,25 +35,25 @@ export const STAYS: Stay[] = [
     price: 120000,
     badges: ['신규'],
     description: '카페 골목에 숨어있는 조용한 공간',
-    images: [],
+    images: ['/images/stays/thumnail/3.jpg'],
   },
 ];
 
-export const CONCEPT_PLACEHOLDERS: Record<string, Array<Omit<Stay, 'id' | 'images'> & { _color: string }>> = {
+export const CONCEPT_PLACEHOLDERS: Record<string, Array<Omit<Stay, 'id' | 'images'> & { _color: string; images?: string[] }>> = {
   '아트 스테이': [
-    { name: '파란 아틀리에', region: '경기', district: '파주시', categories: ['아트 스테이'], capacity: '2~4명', price: 180000, badges: [], description: '', _color: 'cp-3' },
-    { name: '갤러리하우스', region: '부산', district: '수영구', categories: ['아트 스테이'], capacity: '2~4명', price: 160000, badges: [], description: '', _color: 'cp-5' },
-    { name: '모노스튜디오', region: '제주', district: '애월읍', categories: ['아트 스테이'], capacity: '1~2명', price: 170000, badges: [], description: '', _color: 'cp-1' },
+    { name: '파란 아틀리에', region: '경기', district: '파주시', categories: ['아트 스테이'], capacity: '2~4명', price: 180000, badges: [], description: '', _color: 'cp-3', images: ['/images/stays/thumnail/4.jpg'] },
+    { name: '갤러리하우스', region: '부산', district: '수영구', categories: ['아트 스테이'], capacity: '2~4명', price: 160000, badges: [], description: '', _color: 'cp-5', images: ['/images/stays/thumnail/5.jpg'] },
+    { name: '모노스튜디오', region: '제주', district: '애월읍', categories: ['아트 스테이'], capacity: '1~2명', price: 170000, badges: [], description: '', _color: 'cp-1', images: ['/images/stays/thumnail/6.jpg'] },
   ],
   '친환경': [
-    { name: '숲속의 집', region: '강원', district: '홍천군', categories: ['친환경'], capacity: '2~6명', price: 140000, badges: [], description: '', _color: 'cp-2' },
-    { name: '흙집스테이', region: '전남', district: '순천시', categories: ['친환경'], capacity: '2~4명', price: 120000, badges: [], description: '', _color: 'cp-4' },
-    { name: '솔숲재', region: '경북', district: '영양군', categories: ['친환경'], capacity: '2~4명', price: 125000, badges: [], description: '', _color: 'cp-6' },
+    { name: '숲속의 집', region: '강원', district: '홍천군', categories: ['친환경'], capacity: '2~6명', price: 140000, badges: [], description: '', _color: 'cp-2', images: ['/images/stays/thumnail/7.jpg'] },
+    { name: '흙집스테이', region: '전남', district: '순천시', categories: ['친환경'], capacity: '2~4명', price: 120000, badges: [], description: '', _color: 'cp-4', images: ['/images/stays/thumnail/8.jpg'] },
+    { name: '솔숲재', region: '경북', district: '영양군', categories: ['친환경'], capacity: '2~4명', price: 125000, badges: [], description: '', _color: 'cp-6', images: ['/images/stays/thumnail/9.jpg'] },
   ],
   '로컬 스테이': [
-    { name: '서촌골방', region: '서울', district: '종로구', categories: ['로컬 스테이'], capacity: '1~2명', price: 110000, badges: [], description: '', _color: 'cp-1' },
-    { name: '부산골목집', region: '부산', district: '초량동', categories: ['로컬 스테이'], capacity: '2~4명', price: 130000, badges: [], description: '', _color: 'cp-6' },
-    { name: '전주한옥', region: '전북', district: '전주시', categories: ['로컬 스테이'], capacity: '2~6명', price: 150000, badges: [], description: '', _color: 'cp-4' },
+    { name: '서촌골방', region: '서울', district: '종로구', categories: ['로컬 스테이'], capacity: '1~2명', price: 110000, badges: [], description: '', _color: 'cp-1', images: ['/images/stays/thumnail/10.jpg'] },
+    { name: '부산골목집', region: '부산', district: '초량동', categories: ['로컬 스테이'], capacity: '2~4명', price: 130000, badges: [], description: '', _color: 'cp-6', images: ['/images/stays/thumnail/11.png'] },
+    { name: '전주한옥', region: '전북', district: '전주시', categories: ['로컬 스테이'], capacity: '2~6명', price: 150000, badges: [], description: '', _color: 'cp-4', images: ['/images/stays/thumnail/1.jpg'] },
   ],
 };
 
@@ -70,7 +70,7 @@ export const STAY_DETAILS: Record<number, StayDetail> = {
     finalPrice: 119000,
     coupon: '1개 쿠폰 사용 가능',
     promo: '[3.26.~4.26.] 3~5월 투숙 시 최대 20% 할인 및 기프트',
-    introImage: '/images/stays/openletter-house/main.svg',
+    introImage: '/images/stays/thumnail/1.jpg',
     room: { name: '103 소담', type: '기본형', minGuests: 2, maxGuests: 2 },
     description: `편지처럼 남겨지는 공간, 오픈레터하우스는 서울 신당동 구 우체국 건물에 자리한 아트 스테이입니다. 오래된 건물의 뼈대를 살려 현대적으로 재해석한 공간으로, 도심 속 예술적인 휴식을 선사합니다.\n\n자연 채광이 가득한 내부에는 예술 작품과 따뜻한 조명이 어우러져, 시간이 멈춘 듯한 여유로움을 경험할 수 있습니다.`,
     address: '서울특별시 중구 신당동 123',

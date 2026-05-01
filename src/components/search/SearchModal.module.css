@@ -182,18 +182,67 @@
   color: #fff;
 }
 
-/* 3단계: 골목 루트 */
+/* 3단계: 날짜 */
+.dateGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.dateField {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.dateLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--mid);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.dateInput {
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1.5px solid var(--border);
+  font-size: 15px;
+  font-family: inherit;
+  color: var(--dark);
+  background: #fff;
+  cursor: pointer;
+  transition: border-color 0.15s;
+  width: 100%;
+  box-sizing: border-box;
+}
+.dateInput:focus { outline: none; border-color: var(--dark); }
+.dateInput:hover { border-color: #aaa; }
+
+.dateSelected {
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--dark);
+  padding: 12px;
+  background: #f7f7f7;
+  border-radius: 10px;
+}
+
+/* 4단계: 골목 루트 */
 .routeGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
+  gap: 10px;
 }
 .routeCard {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  padding: 28px 16px 24px;
+  gap: 4px;
+  padding: 18px 12px 16px;
   border-radius: 16px;
   border: 1.5px solid var(--border);
   background: #fff;
@@ -208,7 +257,7 @@
   background: var(--dark);
 }
 
-.routeEmoji { font-size: 40px; line-height: 1; margin-bottom: 6px; }
+.routeEmoji { font-size: 30px; line-height: 1; margin-bottom: 4px; }
 .routeName {
   font-size: 15px; font-weight: 700;
   color: var(--dark);
